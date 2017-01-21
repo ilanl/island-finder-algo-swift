@@ -5,7 +5,7 @@ class islandTests: XCTestCase {
     
     func testIslandFinder() {
         
-        let map = RandomMapGenerator(rows: 5, columns: 5).newMap()
+        let map = RandomMapGenerator(rows: 10, columns: 10).newMap()
         map.draw()
         
         print("start")

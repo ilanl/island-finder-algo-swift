@@ -148,8 +148,11 @@ class Map{
                             print("❌", terminator: "")
                         }
                     }
+                    if c == self.maxColumnIndex{
+                        print("", terminator: "\n")
+                    }
                 }
-                print("\n")
+                
             }
         }
     }
