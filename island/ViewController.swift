@@ -38,7 +38,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     //MARK: Actions
     @IBAction func didPressNewMap(_ sender: UIButton) {
         
-        self.map = RandomMapGenerator(rows: 10, columns: 10, probability: 90).newMap()
+        self.map = RandomMapGenerator(rows: 10, columns: 10, probability: 30).newMap()
         self.mapCollection.reloadData()
         self.solveButton.isEnabled = true
     }
