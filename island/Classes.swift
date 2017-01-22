@@ -3,16 +3,18 @@ import UIKit
 class RandomMapGenerator{
     
     var map: Map.Matrix
+    var probability: UInt32 = 100
     
-    init(rows:Int, columns:Int) {
+    init(rows:Int, columns:Int, probability: UInt32) {
         self.map = Map.Matrix(rows: rows, columns: columns)
+        self.probability = probability
     }
     
     func newMap() -> Map.Matrix{
         
         for r in 0...self.map.maxRowIndex{
             for c in 0...self.map.maxColumnIndex{
-                if arc4random_uniform(30)%4 == 0{ //Change randomness
+                if arc4random_uniform(100) > self.probability{//arc4random_uniform(30)%4 == 0{ //Change randomness
                     var p = self.map[r,c]!
                     if p.color == Map.Color.water{
                         p.color = Map.Color.land
@@ -58,14 +60,14 @@ class Map{
             self.columns = columns
             grid = Array(repeating: Point(), count: rows * columns)
             
-            let nc = NotificationCenter.default
-            nc.addObserver(forName:Notifications.PointVisitedNotification,
-                           object:nil, queue:nil) {
-                            notification in
-                            
-                            self.draw()
-                            print("--------------------------------")
-            }
+//            let nc = NotificationCenter.default
+//            nc.addObserver(forName:Notifications.PointVisitedNotification,
+//                           object:nil, queue:nil) {
+//                            notification in
+//                            
+//                            self.draw()
+//                            print("--------------------------------")
+//            }
         }
         
         var maxRowIndex: Int{

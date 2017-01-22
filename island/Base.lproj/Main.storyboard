@@ -87,6 +87,7 @@
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="mapCollection" destination="Kxm-eg-biQ" id="bYb-Bd-xeW"/>
+                        <outlet property="solveButton" destination="q6N-9C-PbZ" id="lCk-Ge-d5p"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
