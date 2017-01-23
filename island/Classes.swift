@@ -36,9 +36,21 @@ class Map{
         case land, water, visited
     }
     
+    class Head{
+        var val: Int
+        var name: String
+        
+        init(name: String, val: Int){
+            self.name = name
+            self.val = val
+        }
+    }
+    
     class Point{
         var x:Int?
         var y:Int?
+        var networkHead: Head?
+        
         var color: Map.Color = .water{
             didSet{
                 if (self.color == Map.Color.visited && oldValue != self.color){
@@ -81,7 +93,7 @@ class Map{
             }
         }
         
-        subscript(index: Int) -> Point?{
+        public subscript(index: Int) -> Point?{
             get{
                 if !indexIsValid(index: index) {
                     return nil
@@ -95,7 +107,7 @@ class Map{
             }
         }
         
-        subscript(row: Int, column: Int) -> Point? {
+        public subscript(row: Int, column: Int) -> Point? {
             get {
                 if !indexIsValid(row: row, column: column){
                     return nil
@@ -119,15 +131,14 @@ class Map{
             return index >= 0 && index < (self.rows * self.columns)
         }
         
-        func getLandNeighbors(row: Int, column: Int) -> [(Int, Int)]{
+        func getLandNeighbors(row: Int, column: Int) -> [Point]{
             
-            var results:[(Int, Int)] = []
+            var results:[Point] = []
             
-            //nn, ne, clock-wise loop in land neighbors
             for coords in [(row-1,column),(row-1,column+1),(row,column+1),(row+1,column+1),(row+1,column),(row+1,column-1),(row,column-1),(row-1,column-1)]{
                 if let p = self[coords.0,coords.1]{
                     if (p.color == Map.Color.land){
-                        results.append(coords)
+                        results.append(p)
                     }
                 }
             }
@@ -155,72 +166,125 @@ class Map{
 //                }
 //                
 //            }
-            //print("\n")
+//            print("\n")
         }
     }
 }
+
+//class IslandFinder{
+//    
+//    var matrix: Map.Matrix!
+//    var stack: NetworkStack!
+//    
+//    func findIslandsCount(matrix: Map.Matrix) -> Int{
+//        
+//        self.matrix = matrix
+//        self.stack = NetworkStack()
+//        
+//        var numIslands: Int = 0
+//        for r in 0...matrix.maxRowIndex {
+//            for c in 0...matrix.maxColumnIndex {
+//                let p = matrix[r,c]!
+//                if(p.color == Map.Color.land) {
+//                    findConnectedIslands(i: r,j: c)
+//                    numIslands = numIslands + 1
+//                }
+//            }
+//        }
+//        return numIslands
+//    }
+//    
+//    private func findConnectedIslands(i:Int, j:Int){
+//        
+//        let point = matrix[i,j]!
+//        point.color = Map.Color.visited
+//        stack.push(point)
+//        
+//        while(stack.peek() != nil){
+//            let p = stack.peek()!
+//            let neighbors = matrix.getLandNeighbors(row: p.x!, column: p.y!)
+//            if neighbors.count > 0{
+//                for coords in neighbors{
+//                    let p1 = matrix[coords.x!,coords.y!]!
+//                    p1.color = .visited
+//                    stack.push(p1)
+//                }
+//            }
+//            else{
+//                let _ = stack.pop()
+//            }
+//        }
+//    }
+//}
 
 class IslandFinder{
     
     var matrix: Map.Matrix!
-    var stack: GraphStack!
+    var networksRelations:[Int:Int] = [:]
     
     func findIslandsCount(matrix: Map.Matrix) -> Int{
         
         self.matrix = matrix
-        self.stack = GraphStack()
+        var networkCounter:Int = 0
         
-        var numIslands: Int = 0
+        func incrementCounter()->Int{
+            networkCounter = networkCounter + 1
+            self.networksRelations[networkCounter] = networkCounter //new network detected
+            return networkCounter
+        }
+        
         for r in 0...matrix.maxRowIndex {
             for c in 0...matrix.maxColumnIndex {
                 let p = matrix[r,c]!
                 if(p.color == Map.Color.land) {
-                    findConnectedIslands(i: r,j: c)
-                    numIslands = numIslands + 1
+                    
+                    if p.networkHead == nil{
+                        let counter = incrementCounter()
+                        p.networkHead = Map.Head(name: "\(counter)", val: counter)
+                    }
+                    for pn in matrix.getLandNeighbors(row: p.x!, column: p.y!){
+                        
+                        if pn.networkHead == nil{
+                            pn.networkHead = p.networkHead
+                        }
+                        else if pn.networkHead != nil && !(pn.networkHead! === p.networkHead!){
+                            
+                            if (pn.networkHead!.val > p.networkHead!.val){
+                                //absorb network neighbor
+                                if let _ = self.networksRelations[pn.networkHead!.val]{
+                                    self.networksRelations[pn.networkHead!.val] = nil
+                                }
+                            }
+                            else{
+                                //absorb network neighbor
+                                if let _ = self.networksRelations[p.networkHead!.val]{
+                                    self.networksRelations[p.networkHead!.val] = nil
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-        return numIslands
-    }
-    
-    private func findConnectedIslands(i:Int, j:Int){
         
-        let point = matrix[i,j]!
-        point.color = Map.Color.visited
-        stack.push(point)
-        
-        while(stack.peek() != nil){
-            let p = stack.peek()!
-            let neighbors = matrix.getLandNeighbors(row: p.x!, column: p.y!)
-            if neighbors.count > 0{
-                for coords in neighbors{
-                    let p1 = matrix[coords.0,coords.1]!
-                    p1.color = .visited
-                    stack.push(p1)
-                }
-            }
-            else{
-                let _ = stack.pop()
-            }
-        }
+        //print(networksRelations)
+
+        return networksRelations.count
     }
 }
 
-struct GraphStack {
+class NetworkStack {
     var items:[Map.Point] = []
     
     func peek() -> Map.Point?{
         return items.last
     }
     
-    mutating func push(_ item: Map.Point) {
+    func push(_ item: Map.Point) {
         items.append(item)
     }
     
-    mutating func pop() -> Map.Point {
+    func pop() -> Map.Point {
         return items.removeLast()
     }
 }
-
-
-

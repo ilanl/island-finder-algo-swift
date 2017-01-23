@@ -17,20 +17,21 @@ class islandTests: XCTestCase {
         print("end")
     }
 
-    func testMediumCase() {
+    
+    func testHardCase() {
         
         self.measureMetrics(type(of: self).defaultPerformanceMetrics(), automaticallyStartMeasuring: false, for: {
-            let probability: UInt32 = 60
+            let probability: UInt32 = arc4random_uniform(100)
             print("creating map")
             self.map = RandomMapGenerator(rows: 1000, columns: 1000, probability: probability).newMap()
-            print("start")
+            print("\(Date()) start - probability: \(probability)")
             
             self.startMeasuring()
             let result = IslandFinder().findIslandsCount(matrix: self.map)
             self.stopMeasuring()
             
             print(result)
-            print("end")
+            print("\(Date()) end")
         })
     }
 }
