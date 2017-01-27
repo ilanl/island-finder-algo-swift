@@ -19,7 +19,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
         
-        guard let p = self.map![indexPath.row] else { return cell }
+        let p = self.map![indexPath.row]!
         cell.backgroundColor = p.getColor()
         
         return cell
@@ -30,17 +30,31 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     //MARK: Actions
     @IBAction func didPressNewMap(_ sender: UIButton) {
         
-        self.map = RandomMapGenerator(rows: 10, columns: 10, probability: arc4random_uniform(100)).newMap()
+        self.solveButton.setTitle("Solve!", for: .normal)
+
+        self.map = RandomMapGenerator(rows: 10, columns: 10, probability: 60).newMap()
+        
         self.mapCollection.reloadData()
         self.solveButton.isEnabled = true
     }
     
     @IBAction func didPressSolve(_ sender: Any) {
         
-        guard let _ = map, self.solveButton.isEnabled else { return }
-        self.solveButton.isEnabled = false
-        let result = IslandFinder(map: self.map!).findIslandsCount()
-        self.mapCollection.reloadData()
+        guard let _map = map else { return }
+        
+        if (solveButton.titleLabel?.text == "Solve again!"){
+            self.map!.reset()
+        }
+        
+        self.solveButton.setTitle("Solve again!", for: .normal)
+        
+        let result = IslandFinder(map: self.map!).getCount { [weak self] p in
+            guard let weakSelf = self else { assertionFailure("fatal error"); return  }
+            DispatchQueue.main.async {
+                let pointIndex = _map.columns * p.x + p.y
+                weakSelf.mapCollection.reloadItems(at: [IndexPath(row: pointIndex , section: 0)])
+            }
+        }
         self.alert(message: "Found \(result) islands")
     }
     
