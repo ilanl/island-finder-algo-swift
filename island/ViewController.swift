@@ -2,7 +2,7 @@ import UIKit
 
 class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
 
-    var map: Map.Matrix?
+    var map: Map?
     
     @IBOutlet weak var solveButton: UIButton!
     @IBOutlet weak var mapCollection: UICollectionView!
@@ -19,16 +19,8 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
         
-        if let p = self.map![indexPath.row]{
-            switch p.color{
-                case .land:
-                cell.backgroundColor = UIColor.black
-                case .water:
-                cell.backgroundColor = UIColor.white
-                case .visited:
-                cell.backgroundColor = UIColor.green
-            }
-        }
+        guard let p = self.map![indexPath.row] else { return cell }
+        cell.backgroundColor = p.getColor()
         
         return cell
     }
@@ -47,7 +39,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         guard let _ = map, self.solveButton.isEnabled else { return }
         self.solveButton.isEnabled = false
-        let result = IslandFinder().findIslandsCount(matrix: self.map!)
+        let result = IslandFinder(map: self.map!).findIslandsCount()
         self.mapCollection.reloadData()
         self.alert(message: "Found \(result) islands")
     }
