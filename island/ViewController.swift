@@ -21,18 +21,21 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         let p = self.map![indexPath.row]!
         cell.backgroundColor = p.getColor()
-        
         return cell
     }
     
     
     //MARK: -
     //MARK: Actions
+    @IBAction func didPressRefresh(_ sender: Any) {
+        self.mapCollection.reloadData()
+    }
+    
     @IBAction func didPressNewMap(_ sender: UIButton) {
         
         self.solveButton.setTitle("Solve!", for: .normal)
 
-        self.map = RandomMapGenerator(rows: 10, columns: 10, probability: 60).newMap()
+        self.map = MapGenerator(rows: 10, columns: 10, percentageOfLand: 60).random()
         
         self.mapCollection.reloadData()
         self.solveButton.isEnabled = true
@@ -56,6 +59,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             }
         }
         self.alert(message: "Found \(result) islands")
+        self.mapCollection.reloadData()
     }
     
     func alert(message: String, title: String = "") {

@@ -5,31 +5,41 @@ class islandTests: XCTestCase {
     
     func testSimple() {
         
-        let probability: UInt32 = 90
-        let map = RandomMapGenerator(rows: 6, columns: 7, probability: probability).newMap()
+        let percentageOfLand: UInt32 = 30
+        let map = MapGenerator(rows: 6, columns: 7, percentageOfLand: percentageOfLand).random()
         map.draw()
         
         print("start")
         let result = IslandFinder(map: map).getCount { p in
-            //Draw each change in map
             map.draw()
         }
         
         print(result)
         print("end")
-        
-        print("reset")
-        map.reset()
-        map.draw()
     }
-
     
-    func testHardCase() {
+    func testWorseCase() {
         
         self.measureMetrics(type(of: self).defaultPerformanceMetrics(), automaticallyStartMeasuring: false, for: {
-            let probability: UInt32 = 80
-            let map = RandomMapGenerator(rows: 1000, columns: 1000, probability: probability).newMap()
-            print("\(Date()) start - probability: \(probability)")
+            let percentageOfLand: UInt32 = 80
+            let map = MapGenerator(rows: 1000, columns: 1000, percentageOfLand: percentageOfLand).random()
+            print("\(Date()) start - percentageOfLand: \(percentageOfLand)")
+            
+            self.startMeasuring()
+            let result = IslandFinder(map: map).getCount()
+            self.stopMeasuring()
+            
+            print(result)
+            print("\(Date()) end")
+        })
+    }
+    
+    func testNormalCase() {
+        
+        self.measureMetrics(type(of: self).defaultPerformanceMetrics(), automaticallyStartMeasuring: false, for: {
+            let percentageOfLand: UInt32 = 50
+            let map = MapGenerator(rows: 1000, columns: 1000, percentageOfLand: percentageOfLand).random()
+            print("\(Date()) start - percentageOfLand: \(percentageOfLand)")
             
             self.startMeasuring()
             let result = IslandFinder(map: map).getCount()

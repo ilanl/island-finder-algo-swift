@@ -1,22 +1,22 @@
 import UIKit
 
-class RandomMapGenerator{
+class MapGenerator{
     
     var map: Map
-    var probability: UInt32 = 100
+    var percentageOfLand: UInt32 = 100
     
-    init(rows:Int, columns:Int, probability: UInt32) {
+    init(rows:Int, columns:Int, percentageOfLand: UInt32) {
         self.map = Map(rows: rows, columns: columns)
-        self.probability = probability
+        self.percentageOfLand = percentageOfLand
     }
     
-    func newMap() -> Map{
+    func random() -> Map{
         
         for r in 0...self.map.maxRowIndex{
             for c in 0...self.map.maxColumnIndex{
                 
                 let p = Point()
-                p.isLand = arc4random_uniform(100) < self.probability
+                p.isLand = arc4random_uniform(100) < self.percentageOfLand
                 p.x = r
                 p.y = c
                 self.map[r,c] = p
@@ -30,12 +30,10 @@ class Head{
     
     var color: UIColor
     var numericValue: Int
-    var emoji: String?
     
-    init(number: Int, color: UIColor, emoji: String?){
+    init(number: Int, color: UIColor){
         self.numericValue = number
         self.color = color
-        self.emoji = emoji
     }
 }
 
@@ -146,13 +144,13 @@ class Map {
                 if let p = self[r,c]{
                     
                     if let head = p.head {
-                        print(head.emoji, terminator: "")
+                        print("\(head.numericValue)", terminator: "")
                     }
                     else if p.isLand {
-                        print("🍺", terminator: "")
+                        print(" 🍺", terminator: "")
                     }
                     else {
-                        print("🌀", terminator: "")
+                        print(" 🌀", terminator: "")
                     }
                 }
                 if c == self.maxColumnIndex{
@@ -174,9 +172,8 @@ class IslandFinder{
     
     func getCount(onChange:((_ pointChanged: Point)->())? = nil) -> Int{
         
-        var networks:[Int:Int] = [:]
+        var networks:[Int:Head] = [:]
         var networkCounter:Int = 0
-        let emojiStack = EmojiStack()
         
         for r in 0...map.maxRowIndex {
             
@@ -188,8 +185,8 @@ class IslandFinder{
                 
                 if currentPoint.head == nil{
                     networkCounter = networkCounter + 1
-                    currentPoint.head = Head(number: networkCounter, color: UIColor.red, emoji: emojiStack.pop()) //TODO generate color
-                    networks[networkCounter] = networkCounter //new network detected
+                    currentPoint.head = Head(number: networkCounter, color: ColorDifferenciator.random())
+                    networks[networkCounter] = currentPoint.head!
                     onChange?(currentPoint)
                 }
                 
@@ -202,8 +199,11 @@ class IslandFinder{
                     else if !(neighborLandPoint.head! === currentPoint.head!){
                         
                         if (neighborLandPoint.head!.numericValue > currentPoint.head!.numericValue){
+                            
                             networks[neighborLandPoint.head!.numericValue] = nil
                             neighborLandPoint.head! = currentPoint.head!
+                            
+                            //post notification
                             onChange?(neighborLandPoint)
                         }
                         else{
@@ -220,16 +220,26 @@ class IslandFinder{
     }
 }
 
-class EmojiStack {
-    var emojis:[String] = ["❌","❎","🅰","🆎","🆒","🆔","🆚","🈯","🌾","🍚","🍜","🍝","🍞","🍟","🍡","🍵","🍸","🎀","🎁","🎂","🎃","🎄","🎾","🐍","🐵","🐶","🐷","🐸","🐹","🐺","🐻","👀","👙","👶","👿","💉","💊","💚","💛","💜","💩","💪","💰","🔑"]
+//class EmojiStack {
+//    var emojis:[String] = ["❌","❎","🅰","🆎","🆒","🆔","🆚","🈯","🌾","🍚","🍜","🍝","🍞","🍟","🍡","🍵","🍸","🎀","🎁","🎂","🎃","🎄","🎾","🐍","🐵","🐶","🐷","🐸","🐹","🐺","🐻","👀","👙","👶","👿","💉","💊","💚","💛","💜","💩","💪","💰","🔑"]
+//    
+//    func peek() -> String?{
+//        return emojis.last
+//    }
+//    
+//    func pop() -> String? {
+//        guard (peek() != nil) else { return nil}
+//        return emojis.removeLast()
+//    }
+//}
+
+class ColorDifferenciator{
     
-    func peek() -> String?{
-        return emojis.last
-    }
-    
-    func pop() -> String? {
-        guard (peek() != nil) else { return nil}
-        return emojis.removeLast()
+    class func random() -> UIColor{
+        
+        let randomRed:CGFloat = CGFloat(arc4random()) / CGFloat(UInt32.max)
+        let randomGreen:CGFloat = CGFloat(arc4random()) / CGFloat(UInt32.max)
+        let randomBlue:CGFloat = CGFloat(arc4random()) / CGFloat(UInt32.max)
+        return UIColor(red: randomRed, green: randomGreen, blue: randomBlue, alpha: 1.0)
     }
 }
-

@@ -22,7 +22,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="Kxm-eg-biQ" userLabel="MapView">
-                                <rect key="frame" x="37.5" y="153.5" width="300" height="300"/>
+                                <rect key="frame" x="38" y="154" width="300" height="300"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="300" id="Bax-zW-wnu"/>
@@ -51,7 +51,7 @@
                                 </connections>
                             </collectionView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Op9-hC-JD5">
-                                <rect key="frame" x="-0.5" y="617" width="375" height="50"/>
+                                <rect key="frame" x="0.0" y="617" width="375" height="50"/>
                                 <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="C2w-ru-9NU"/>
@@ -69,14 +69,26 @@
                                     <action selector="didPressSolve:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xdD-Re-Rdb"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="G0N-Mt-CIO">
+                                <rect key="frame" x="123" y="102" width="129" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="129" id="QD3-uY-4Hw"/>
+                                </constraints>
+                                <state key="normal" title="Draw again"/>
+                                <connections>
+                                    <action selector="didPressRefresh:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Rck-lA-wFp"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="Op9-hC-JD5" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="0DI-Pk-Fh6"/>
+                            <constraint firstItem="G0N-Mt-CIO" firstAttribute="centerX" secondItem="q6N-9C-PbZ" secondAttribute="centerX" id="4MM-9a-rvH"/>
                             <constraint firstItem="Kxm-eg-biQ" firstAttribute="top" secondItem="q6N-9C-PbZ" secondAttribute="bottom" constant="40.5" id="8V2-EP-dZA"/>
                             <constraint firstItem="Kxm-eg-biQ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="G7S-7b-2BO"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Op9-hC-JD5" secondAttribute="bottom" id="MQu-uK-JJ0"/>
                             <constraint firstItem="Op9-hC-JD5" firstAttribute="width" secondItem="8bC-Xf-vdC" secondAttribute="width" id="Tk4-5M-7N6"/>
+                            <constraint firstItem="q6N-9C-PbZ" firstAttribute="centerY" secondItem="G0N-Mt-CIO" secondAttribute="centerY" constant="-19" id="VQv-fp-F5H"/>
                             <constraint firstItem="Kxm-eg-biQ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-30" id="dNz-Bz-VYa"/>
                             <constraint firstItem="q6N-9C-PbZ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="zx3-bK-ZE6"/>
                         </constraints>
