@@ -345,6 +345,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = J62AWW3Q79;
 				INFOPLIST_FILE = island/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pixieTechnology.island;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -358,6 +359,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = J62AWW3Q79;
 				INFOPLIST_FILE = island/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.pixieTechnology.island;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -414,6 +416,7 @@
 				5F69518E1E3389F700AE7AF2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5F69518F1E3389F700AE7AF2 /* Build configuration list for PBXNativeTarget "islandTests" */ = {
 			isa = XCConfigurationList;
@@ -422,6 +425,7 @@
 				5F6951911E3389F700AE7AF2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

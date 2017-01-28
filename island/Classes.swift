@@ -3,9 +3,9 @@ import UIKit
 class MapGenerator{
     
     var map: Map
-    var percentageOfLand: UInt32 = 100
+    var percentageOfLand: UInt8 = 100
     
-    init(rows:Int, columns:Int, percentageOfLand: UInt32) {
+    init(rows:Int, columns:Int, percentageOfLand: UInt8) {
         self.map = Map(rows: rows, columns: columns)
         self.percentageOfLand = percentageOfLand
     }
@@ -16,7 +16,7 @@ class MapGenerator{
             for c in 0...self.map.maxColumnIndex{
                 
                 let p = Point()
-                p.isLand = arc4random_uniform(100) < self.percentageOfLand
+                p.isLand = arc4random_uniform(100) < UInt32(self.percentageOfLand)
                 p.x = r
                 p.y = c
                 self.map[r,c] = p
@@ -30,10 +30,12 @@ class Head{
     
     var color: UIColor
     var numericValue: Int
+    var emoji: String?
     
-    init(number: Int, color: UIColor){
+    init(number: Int, color: UIColor, emoji: String? = nil){
         self.numericValue = number
         self.color = color
+        self.emoji = emoji
     }
 }
 
@@ -54,12 +56,49 @@ class Point{
 
 class Map {
     let rows: Int, columns: Int
-    private var grid: [Point]
+    private var grid: [Point] = []
     
-    init(rows: Int, columns: Int) {
+    init(rows: Int, columns: Int, str: String? = nil){
         self.rows = rows
         self.columns = columns
-        grid = [Point](repeating: Point(), count:rows*columns)
+        
+        if (str == nil){
+            grid = [Point](repeating: Point(), count:rows*columns)
+        }
+        else{
+            grid = deserialize(maxRowsIndex: self.maxRowIndex, maxColsIndex: self.maxColumnIndex, serializedGrid: str!)
+        }
+    }
+    
+    //MARK: -
+    //MARK: Internal serialize / serialize for debugging
+    
+    internal func serialize() -> String{
+        
+        let arrStr = grid.map { p -> String in
+            return p.isLand ? "*" : "~"
+        }
+        return arrStr.joined(separator: ",")
+    }
+    
+    private func deserialize(maxRowsIndex: Int, maxColsIndex: Int, serializedGrid: String) -> [Point]{
+        var result: [Point] = []
+        let arr = serializedGrid.components(separatedBy: ",")
+        
+        var i: Int = 0
+        for r in 0...maxRowsIndex{
+            for c in 0...maxColsIndex{
+                
+                let p = Point()
+                p.isLand = arr[i] == "*"
+                p.x = r
+                p.y = c
+                result.append(p)
+                i = i + 1
+            }
+        }
+        
+        return result
     }
     
     var maxRowIndex: Int{
@@ -102,8 +141,10 @@ class Map {
         }
     }
     
-    //MARK: Reset all point network markings to re-run finder on same map
+    //MARK: Reset all point network markings in order to re-run on same map
+    
     public func reset(){
+        
         for r in 0...self.maxRowIndex{
             for c in 0...self.maxColumnIndex{
                 if let p = self[r,c], p.isLand == true {
@@ -144,13 +185,18 @@ class Map {
                 if let p = self[r,c]{
                     
                     if let head = p.head {
-                        print("\(head.numericValue)", terminator: "")
+                        if let emoji = head.emoji{
+                            print("\(emoji)", terminator: "")
+                        }
+                        else{
+                            print("\(head.numericValue)", terminator: "")
+                        }
                     }
                     else if p.isLand {
-                        print(" 🍺", terminator: "")
+                        print("🍺", terminator: "")
                     }
                     else {
-                        print(" 🌀", terminator: "")
+                        print("🌀", terminator: "")
                     }
                 }
                 if c == self.maxColumnIndex{
@@ -166,14 +212,18 @@ class IslandFinder{
     
     var map: Map!
     
+    var networks:[Int:Head] = [:]
+    var networkCounter:Int = 0
+    let emojiStack = EmojiStack()
+    
     init(map: Map) {
         self.map = map
     }
     
     func getCount(onChange:((_ pointChanged: Point)->())? = nil) -> Int{
         
-        var networks:[Int:Head] = [:]
-        var networkCounter:Int = 0
+        networks.removeAll()
+        networkCounter = 0
         
         for r in 0...map.maxRowIndex {
             
@@ -218,20 +268,27 @@ class IslandFinder{
         
         return networks.count
     }
+    
+    func displayNetworks(){
+        print(self.networks.map({ k, v -> String in
+            return "(\(k):\(v.emoji!))"
+        }).joined(separator: ","))
+    }
+
 }
 
-//class EmojiStack {
-//    var emojis:[String] = ["❌","❎","🅰","🆎","🆒","🆔","🆚","🈯","🌾","🍚","🍜","🍝","🍞","🍟","🍡","🍵","🍸","🎀","🎁","🎂","🎃","🎄","🎾","🐍","🐵","🐶","🐷","🐸","🐹","🐺","🐻","👀","👙","👶","👿","💉","💊","💚","💛","💜","💩","💪","💰","🔑"]
-//    
-//    func peek() -> String?{
-//        return emojis.last
-//    }
-//    
-//    func pop() -> String? {
-//        guard (peek() != nil) else { return nil}
-//        return emojis.removeLast()
-//    }
-//}
+class EmojiStack {
+    var emojis:[String] = ["❎","🅰","🆎","🆒","🆔","🆚","🈯","🌾","🍚","🍜","🍝","🍞","🍟","🍡","🍵","🍸","🎀","🎁","🎂","🎃","🎄","🎾","🐍","🐵","🐶","🐷","🐸","🐹","🐺","🐻","👀","👙","👶","👿","💊","💚","💩","💪","💰","🔑"]
+    
+    func peek() -> String?{
+        return emojis.last
+    }
+    
+    func pop() -> String? {
+        guard (peek() != nil) else { return nil}
+        return emojis.removeLast()
+    }
+}
 
 class ColorDifferenciator{
     

@@ -35,7 +35,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         self.solveButton.setTitle("Solve!", for: .normal)
 
-        self.map = MapGenerator(rows: 10, columns: 10, percentageOfLand: 60).random()
+        self.map = MapGenerator(rows: 10, columns: 10, percentageOfLand: UInt8(arc4random_uniform(100))).random()
+        
+        print(self.map!.serialize())
         
         self.mapCollection.reloadData()
         self.solveButton.isEnabled = true

@@ -3,10 +3,10 @@ import XCTest
 
 class islandTests: XCTestCase {
     
-    func testSimple() {
+    func testDebug(){
+        let str = "~,*,~,~,~,~,~,~,~,~,~,~,~,~,~,~,*,~,~,~,*,~,~,*,*,~,*,~,~,~,~,*,~,~,~,~,~,~,~,*,*,~,~,~,~,~,*,~,*,~,*,~,*,~,*,~,~,~,*,*,*,~,*,~,~,*,*,~,*,~,~,~,~,~,*,~,~,*,*,~,~,~,~,*,~,~,~,~,~,~,*,~,*,~,~,*,~,~,~,~"
         
-        let percentageOfLand: UInt32 = 30
-        let map = MapGenerator(rows: 6, columns: 7, percentageOfLand: percentageOfLand).random()
+        let map = Map(rows: 10, columns: 10, str: str)
         map.draw()
         
         print("start")
@@ -16,12 +16,29 @@ class islandTests: XCTestCase {
         
         print(result)
         print("end")
+        
+        XCTAssert(result == 9)
+    }
+    
+    func testSimple() {
+        
+        let percentageOfLand: UInt8 = 60
+        let map = MapGenerator(rows: 10, columns: 10, percentageOfLand: percentageOfLand).random()
+        map.draw()
+        
+        print("start")
+        let result = IslandFinder(map: map).getCount { p in
+            //map.draw()
+        }
+        
+        print(result)
+        print("end")
     }
     
     func testWorseCase() {
         
         self.measureMetrics(type(of: self).defaultPerformanceMetrics(), automaticallyStartMeasuring: false, for: {
-            let percentageOfLand: UInt32 = 80
+            let percentageOfLand: UInt8 = 80
             let map = MapGenerator(rows: 1000, columns: 1000, percentageOfLand: percentageOfLand).random()
             print("\(Date()) start - percentageOfLand: \(percentageOfLand)")
             
@@ -37,7 +54,7 @@ class islandTests: XCTestCase {
     func testNormalCase() {
         
         self.measureMetrics(type(of: self).defaultPerformanceMetrics(), automaticallyStartMeasuring: false, for: {
-            let percentageOfLand: UInt32 = 50
+            let percentageOfLand: UInt8 = 50
             let map = MapGenerator(rows: 1000, columns: 1000, percentageOfLand: percentageOfLand).random()
             print("\(Date()) start - percentageOfLand: \(percentageOfLand)")
             
